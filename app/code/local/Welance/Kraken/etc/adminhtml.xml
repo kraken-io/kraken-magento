@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <menu>
+        <welance translate="title" module="welance_kraken">
+            <title>Kraken.io</title>
+            <sort_order>50</sort_order>
+            <children>
+                <welance_kraken>
+                    <title>Image Optimizer</title>
+                    <action>adminhtml/kraken/index/</action>
+                    <sort_order>10</sort_order>
+                </welance_kraken>
+                <welance_kraken_statistics>
+                    <title>Optimization Statistics</title>
+                    <action>adminhtml/kraken/statistics/</action>
+                    <sort_order>11</sort_order>
+                </welance_kraken_statistics>
+                <welance_kraken_config>
+                    <title>Kraken API Configuration</title>
+                    <action>adminhtml/system_config/edit/section/welance_kraken</action>
+                    <sort_order>12</sort_order>
+                </welance_kraken_config>
+            </children>
+        </welance>
+    </menu>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <welance_kraken>
+                                        <title>Kraken API</title>
+                                    </welance_kraken>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

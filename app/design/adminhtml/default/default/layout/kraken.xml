@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+<layout>
+    <adminhtml_kraken_index>
+        <reference name="head">
+            <action method="setTitle" translate="title"><title>Kraken.io</title></action>
+            <action method="addCss"><name>kraken/images.css</name></action>
+            <action method="addJs"><script>kraken/async.js</script></action>
+            <action method="addJs"><script>kraken/jquery.js</script></action>
+            <action method="addJs"><script>kraken/optimize.js</script></action>
+        </reference>
+        <reference name="menu">
+            <action method="setActive"><menupath>welance/welance_kraken</menupath></action>
+        </reference>
+        <reference name="content">
+            <block type="welance_kraken/adminhtml_images" name="welance_kraken_images">
+                <block type="welance_kraken/adminhtml_images_media" name="welance_kraken_media" as="kraken.media" template="kraken/images/media.phtml"/>
+                <block type="welance_kraken/adminhtml_images_skin" name="welance_kraken_skin" as="kraken.skin" template="kraken/images/skin.phtml"/>
+            </block>
+        </reference>
+    </adminhtml_kraken_index>
+
+    <adminhtml_kraken_statistics>
+        <reference name="head">
+            <action method="setTitle" translate="title"><title>Kraken.io Statistics</title></action>
+            <action method="addCss"><name>kraken/images.css</name></action>
+        </reference>
+        <reference name="menu">
+            <action method="setActive"><menupath>welance/welance_kraken_statistics</menupath></action>
+        </reference>
+        <reference name="content">
+            <block type="welance_kraken/adminhtml_statistics" name="welance_kraken_statistics" />
+        </reference>
+    </adminhtml_kraken_statistics>
+</layout>

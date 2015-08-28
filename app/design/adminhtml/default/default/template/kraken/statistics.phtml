@@ -1,0 +1,103 @@
+<?php
+    $helper = Mage::helper('welance_kraken');
+    $response = $this->getQuota();
+?>
+
+<div class="content-header">
+    <h3>Optimization Statistics</h3>
+</div>
+
+<div id="kraken-stats">
+    <div class="kraken-row">
+        <h3>Kraken.io Account</h3>
+        <div class="kraken-inner">
+            <?php if ($response->success == true): ?>
+                <div class="kraken-box">
+                    Plan level
+                    <strong><?php echo $response->plan_name ?></strong>
+                </div>
+                <div class="kraken-box">
+                    Monthly quota
+                    <strong><?php echo $helper->getImageSizeConverted($response->quota_total) ?></strong>
+                </div>
+                <div class="kraken-box">
+                    Current usage
+                    <strong><?php echo $helper->getImageSizeConverted($response->quota_used) ?></strong>
+                </div>
+                <div class="kraken-box">
+                    Remaining quota
+                    <strong><?php echo $helper->getImageSizeConverted($response->quota_remaining) ?></strong>
+                </div>
+            <?php else: ?>
+                <ul class="messages">
+                    <li class="notice-msg">
+                        <ul>
+                            <li>
+                                <?php if ($response->errorMessage): ?>
+                                    <span><?php echo $response->errorMessage ?></span>
+                                <?php else: ?>
+                                    <span><?php echo $helper->__('To get information about your Kraken.io Account, please provide your Kraken API Credentials <a href="%s">here</a>.',
+                                            $this->getUrl('adminhtml/system_config/edit/section/welance_kraken')) ?></span>
+                                <?php endif; ?>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <div class="kraken-row">
+        <h3>Product Images</h3>
+        <div class="kraken-inner">
+            <div class="kraken-box">
+                Images optimized
+                <strong><?php echo $this->getOptimizedImagesCount(Welance_Kraken_Model_Abstract::TYPE_CACHE) ?></strong>
+            </div>
+            <div class="kraken-box">
+                Total uploads
+                <strong><?php echo $helper->getImageSizeConverted($this->getTransferedImageSize(Welance_Kraken_Model_Abstract::TYPE_CACHE)) ?></strong>
+            </div>
+            <div class="kraken-box">
+                Total savings
+                <strong><?php echo $helper->getImageSizeConverted($this->getSavedImageSize(Welance_Kraken_Model_Abstract::TYPE_CACHE)) ?></strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="kraken-row">
+        <h3>Media Images</h3>
+        <div class="kraken-inner">
+            <div class="kraken-box">
+                Images optimized
+                <strong><?php echo $this->getOptimizedImagesCount(Welance_Kraken_Model_Abstract::TYPE_MEDIA) ?></strong>
+            </div>
+            <div class="kraken-box">
+                Total uploads
+                <strong><?php echo $helper->getImageSizeConverted($this->getTransferedImageSize(Welance_Kraken_Model_Abstract::TYPE_MEDIA)) ?></strong>
+            </div>
+            <div class="kraken-box">
+                Total savings
+                <strong><?php echo $helper->getImageSizeConverted($this->getSavedImageSize(Welance_Kraken_Model_Abstract::TYPE_MEDIA)) ?></strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="kraken-row">
+        <h3>Skin Images</h3>
+        <div class="kraken-inner">
+            <div class="kraken-box">
+                Images optimized
+                <strong><?php echo $this->getOptimizedImagesCount(Welance_Kraken_Model_Abstract::TYPE_SKIN) ?></strong>
+            </div>
+            <div class="kraken-box">
+                Total uploads
+                <strong><?php echo $helper->getImageSizeConverted($this->getTransferedImageSize(Welance_Kraken_Model_Abstract::TYPE_SKIN)) ?></strong>
+            </div>
+            <div class="kraken-box">
+                Total savings
+                <strong><?php echo $helper->getImageSizeConverted($this->getSavedImageSize(Welance_Kraken_Model_Abstract::TYPE_SKIN)) ?></strong>
+            </div>
+        </div>
+    </div>
+</div>

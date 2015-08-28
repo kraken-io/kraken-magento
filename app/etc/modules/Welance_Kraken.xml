@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<config>
+    <modules>
+        <Welance_Kraken>
+            <active>true</active>
+            <codePool>local</codePool>
+        </Welance_Kraken>
+    </modules>
+</config>

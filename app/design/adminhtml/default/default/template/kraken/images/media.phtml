@@ -1,0 +1,50 @@
+<?php
+    $imagesCount = (int) $this->getMediaImageCount();
+    $folderImagesCount = $this->getMediaImageFolderCount();
+    $percent = 0;
+
+    if ($imagesCount > 0) {
+        $percent = round(($imagesCount / $folderImagesCount) * 100, 2);
+    }
+
+    $imagesJson = $this->getNewImagesAsJson();
+    $total = count(json_decode($imagesJson));
+    $toBeOptimized = $folderImagesCount - $imagesCount;
+?>
+
+<h3>Media Images</h3>
+
+<div class="kraken-box-inner cf">
+    <?php if ($total == 0): ?>
+        <p class="success-msg"><?php echo $this->__('Great! All media images have been optimized.') ?></p>
+    <?php else: ?>
+        <p class="notice-msg"><?php echo $this->__('Heads up! There are <strong>%s</strong> media images that can be optimized.', $toBeOptimized) ?></p>
+    <?php endif; ?>
+
+    <div class="progress">
+        <div class="progress-number"><?php echo round($percent) ?>%</div>
+        <div class="progress-bar-wrap">
+            <div class="progress-bar" style="width: <?php echo $percent ?>%">&nbsp;</div>
+        </div>
+    </div>
+
+    <p class="images-count"><?php echo $this->__('%s of %s media images optimized', $imagesCount, $folderImagesCount) ?></p>
+</div>
+
+<div class="kraken-box-buttons">
+    <?php if ($folderImagesCount - $imagesCount > 0): ?>
+        <button onclick="optimizeImages.optimize('media', mediaImages, mediaTotal)"><?php echo $this->__('Optimize Media images') ?></button>
+    <?php endif; ?>
+
+    <?php if (Mage::helper('welance_kraken')->canShowBackupButton(Welance_Kraken_Model_Abstract::TYPE_MEDIA)): ?>
+        <a onclick="return confirm('<?php echo $this->__('Are you sure?') ?>');"
+           href="<?php echo Mage::helper("adminhtml")->getUrl('adminhtml/kraken/restore',array('type' => 'media')) ?>" class="button">
+            <?php echo $this->__('Restore Backup Images') ?>
+        </a>
+    <?php endif; ?>
+</div>
+
+<script type="text/javascript">
+    var mediaImages = <?php echo $imagesJson ?>;
+    var mediaTotal = <?php echo $total ?>;
+</script>
