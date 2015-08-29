@@ -37,18 +37,7 @@ class Welance_Kraken_Model_Observer
             $helper = Mage::helper('welance_kraken/api');
             $response = $helper->getUserStatus();
             $config = Mage::getModel('core/config');
-
-            if ($response->plan_name == 'Micro' || $response->plan_name == 'Basic') {
-                $config->saveConfig('welance_kraken/kraken_auth/api_user', null);
-                $config->saveConfig('welance_kraken/kraken_auth/api_secret', null);
-                $config->saveConfig('welance_kraken/kraken_auth/kraken_status', 0);
-
-                Mage::getSingleton('adminhtml/session')->addError($helper->__('
-                    We support Magento only from the Advanced plan up. Your current plan is %s.
-                ', $response->plan_name));
-            } else {
-                $config->saveConfig('welance_kraken/kraken_auth/kraken_status',1);
-            }
+            $config->saveConfig('welance_kraken/kraken_auth/kraken_status',1);
         }
 
         return $this;
