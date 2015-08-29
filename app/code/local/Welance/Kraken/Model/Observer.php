@@ -3,6 +3,11 @@
 class Welance_Kraken_Model_Observer
 {
 
+    /**
+     * @param $observer
+     * @return $this
+     */
+
     public function checkVersion($observer)
     {
         $section = $observer->getEvent()->getControllerAction()->getRequest()->getParam('section');
@@ -27,6 +32,12 @@ class Welance_Kraken_Model_Observer
 
         return $this;
     }
+
+
+    /**
+     * @param $observer
+     * @return $this
+     */
 
     public function checkPlan($observer)
     {
@@ -79,6 +90,11 @@ class Welance_Kraken_Model_Observer
 
         return $this;
     }
+
+    /**
+     * @param $observer
+     * @return void
+     */
 
     public function cacheRedirect($observer)
     {
