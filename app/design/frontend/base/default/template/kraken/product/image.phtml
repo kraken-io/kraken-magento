@@ -1,0 +1,9 @@
+<script type="text/javascript">
+    var cacheImages = <?php echo $this->getImagesToOptimize(); ?>;
+    var requestUrl = '<?php echo Mage::getUrl('kraken/optimize/cache') ?>';
+    var cacheConcurrency = <?php echo $this->getConcurrency() ?>;
+
+    document.observe("dom:loaded", function() {
+        optimizeImages.optimizeCache(cacheImages);
+    });
+</script>

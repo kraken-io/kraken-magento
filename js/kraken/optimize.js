@@ -3,6 +3,7 @@
 /* global Ajax:true */
 /* global requestUrl:true */
 /* global concurrency:true */
+/* global cacheConcurrency:true */
 
 "use strict";
 
@@ -116,5 +117,26 @@ window.optimizeImages = {
                     .addClass("with-success");
             }, 500);
         };
+    },
+
+    optimizeCache: function (images) {
+        var queue = async.queue(function (task, callback) {
+            new Ajax.Request(requestUrl, {
+                method: "post",
+                parameters: {
+                    id: task.file.id,
+                    product_id: task.file.product_id
+                },
+                onComplete: function () {
+                    callback();
+                }
+            });
+        }, cacheConcurrency);
+
+        for (var i = 0, ii = images.length; i < ii; i++) {
+            queue.push({
+                file: images[i]
+            });
+        }
     }
 };

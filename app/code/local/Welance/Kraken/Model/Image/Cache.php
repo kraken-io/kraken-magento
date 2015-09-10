@@ -9,8 +9,27 @@ class Welance_Kraken_Model_Image_Cache extends Mage_Core_Model_Abstract
 
 
     /**
+     * @param $image
+     * @return $this
+     */
+
+    public function saveCacheImage($image)
+    {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $image);
+        finfo_close($finfo);
+
+        $this->setFileName($image)
+            ->setMimeType($mimeType)
+            ->save();
+
+        return $this;
+    }
+
+
+    /**
      * @param $response
-     * @return bool
+     * @return mixed
      */
 
     public function saveResponse($response)
@@ -20,6 +39,8 @@ class Welance_Kraken_Model_Image_Cache extends Mage_Core_Model_Abstract
                 $this->setOriginalSize($response->original_size)
                     ->setSizeAfterUpload($response->kraked_size)
                     ->setSavedFileSize($response->saved_bytes)
+                    ->setIsProcessed(1)
+                    ->setProductId($response->product_id)
                     ->save();
 
                 return $this;

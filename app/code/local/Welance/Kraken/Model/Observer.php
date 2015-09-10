@@ -63,33 +63,12 @@ class Welance_Kraken_Model_Observer
     public function optimizeCacheImage($observer)
     {
         $cacheImage = $observer->getEvent()->getObject()->getNewFile();
-        $helper = Mage::helper('welance_kraken/api');
 
-        $auth = $helper->getAuthentication();
-        $options = $helper->getOptions();
-
-        $data = array_merge(array(
-            "file" => $cacheImage,
-            "data" => json_encode(array_merge(
-                $auth, $options
-            ))
-        ));
-
-        try {
-            $response = $helper->krakenRequest($data, Welance_Kraken_Model_Abstract::KRAKEN_UPLOAD_API_URL);
-
-            if ($response->success == true) {
-                copy($response->kraked_url,$cacheImage);
-                Mage::getModel('welance_kraken/image_cache')->saveResponse($response);
-            } else {
-                Mage::log($response, null, 'kraken_response.log');
-            }
-        } catch (Exception $e) {
-            Mage::log($e->getMessage(), null, 'kraken_response.log');
-        }
+        Mage::getModel('welance_kraken/image_cache')->saveCacheImage($cacheImage);
 
         return $this;
     }
+
 
     /**
      * @param $observer
