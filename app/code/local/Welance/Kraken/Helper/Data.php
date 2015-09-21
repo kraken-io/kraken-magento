@@ -91,10 +91,17 @@ class Welance_Kraken_Helper_Data extends Mage_Core_Helper_Abstract
                 continue;
             }
 
-            if (!in_array($object->getExtension(),$imageTypes)) {
-                continue;
-            }
-
+			// SplFileInfo::getExtension NOT supported < 5.3.6
+			if (version_compare(PHP_VERSION, '5.3.6') >= 0) {
+			    if (!in_array($object->getExtension(),$imageTypes)) {
+					continue;
+				}
+			}
+			else {
+				if (!in_array(pathinfo($imageName, PATHINFO_EXTENSION),$imageTypes)) {
+					continue;
+				}
+			}
 
             $checksum = sha1_file($fullpath);
             $_dir = str_replace($rootDir.DS,'',$object->getPath());
