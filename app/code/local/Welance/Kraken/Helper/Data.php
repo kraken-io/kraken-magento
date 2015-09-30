@@ -91,7 +91,7 @@ class Welance_Kraken_Helper_Data extends Mage_Core_Helper_Abstract
                 continue;
             }
 
- 	    // SplFileInfo::getExtension NOT supported < 5.3.6			
+ 	    // SplFileInfo::getExtension NOT supported < 5.3.6
 	    if (method_exists('SplFileInfo', 'getExtension')) {
 	        if (!in_array($object->getExtension(),$imageTypes)) {
 			continue;
@@ -243,7 +243,7 @@ class Welance_Kraken_Helper_Data extends Mage_Core_Helper_Abstract
      * @return bool
      */
 
-    public function imageExits($type, $path, $imageName, $checksum)
+    public function imageExists($type, $path, $imageName, $checksum)
     {
         $resource = Mage::getSingleton('core/resource');
 

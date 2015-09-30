@@ -20,7 +20,7 @@ class Welance_Kraken_Block_Adminhtml_Images_Media extends Mage_Core_Block_Templa
 
         $i = 0;
         foreach($images as $image){
-            if($helper->imageExits(Welance_Kraken_Model_Abstract::TYPE_MEDIA,$image['dir'],$image['name'],$image['checksum'])){
+            if($helper->imageExists(Welance_Kraken_Model_Abstract::TYPE_MEDIA,$image['dir'],$image['name'],$image['checksum'])){
                 unset($images[$i]);
             }
             $i++;
