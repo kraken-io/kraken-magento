@@ -255,7 +255,7 @@ class Welance_Kraken_Helper_Data extends Mage_Core_Helper_Abstract
 
         $imageNameEscaped = $readConnection->quote($imageName);
 
-        $select = $connection->select(array('id'))
+        $select = $readConnection->select(array('id'))
             ->from($table)
             ->where('path = ?', $path)
             ->where('image_name = ?', $imageNameEscaped)
