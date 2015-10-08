@@ -133,6 +133,10 @@ window.optimizeImages = {
             });
         }, cacheConcurrency);
 
+        if (!images.length) {
+            return;
+        }
+
         for (var i = 0, ii = images.length; i < ii; i++) {
             queue.push({
                 file: images[i]

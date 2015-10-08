@@ -27,21 +27,22 @@ class Welance_Kraken_Block_Product_Image extends Mage_Catalog_Block_Product_View
 
             $i++;
 
-            if($i < $productImagesCount){
+            if ($i < $productImagesCount) {
                 $query .= " OR `file_name` LIKE ";
             } else {
                 $query .= ")";
             }
-
-
         }
 
         $cacheImages = array();
-        foreach($readConnection->fetchAll($query) as $cacheImage){
-            $cacheImages[] = array(
-                'id' =>$cacheImage['id'],
-                'product_id' => $product->getId()
-            );
+
+        if ($productImagesCount > 0) {
+            foreach($readConnection->fetchAll($query) as $cacheImage){
+                $cacheImages[] = array(
+                    'id' =>$cacheImage['id'],
+                    'product_id' => $product->getId()
+                );
+            }
         }
 
         return json_encode($cacheImages);
