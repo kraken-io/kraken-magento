@@ -249,19 +249,24 @@ class Welance_Kraken_Helper_Data extends Mage_Core_Helper_Abstract
 
         $readConnection = $resource->getConnection('core_read');
 
-        $select = $readConnection->select();
-
         $table = $resource->getTableName('welance_kraken/images_'.$type);
 
-        $imageNameEscaped = $readConnection->quote($imageName);
+        $query = "SELECT `id` FROM `{$table}` WHERE `path` = :path AND `image_name` = :image_name AND
+                  (`original_checksum` = :checksum OR `checksum_after_upload` = :checksum)";
 
-        $select = $readConnection->select()
-            ->from($table, array('id'))
-            ->where('path = ?', $path)
-            ->where('image_name = ?', $imageNameEscaped)
-            ->where('original_checksum = ? OR checksum_after_upload = ?', $checksum);
+        $bind = array(
+            'path' => $path,
+            'image_name' => $imageName,
+            'checksum' => $checksum
+        );
 
-        if ($readConnection->fetchOne($select) !== false) {
+        /**
+         * Using $readConnection->query() with bind parameter automatically escapes the string
+         */
+
+        $select = $readConnection->query($query,$bind);
+
+        if ($select->fetch() !== false) {
             return true;
         }
 
