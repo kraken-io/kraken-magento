@@ -161,10 +161,13 @@ class Welance_Kraken_Helper_Data extends Mage_Core_Helper_Abstract
         if ($imageCollectionSize > 0) {
             foreach ($imageCollection as $krakenImage) {
                 try {
-                    copy(
-                        $backupDir . DS . $krakenImage->getPath() . DS . $krakenImage->getImageName(),
-                        Mage::getBaseDir() . DS . $krakenImage->getPath() . DS . $krakenImage->getImageName()
-                    );
+                    $backupFile = $backupDir . DS . $krakenImage->getPath() . DS . $krakenImage->getImageName();
+                    if(is_file($backupFile)){
+                        copy(
+                            $backupFile,
+                            Mage::getBaseDir() . DS . $krakenImage->getPath() . DS . $krakenImage->getImageName()
+                        );
+                    }
                 } catch (Exception $e) {
                     Mage::throwException($e->getMessage());
                 }
@@ -275,7 +278,7 @@ class Welance_Kraken_Helper_Data extends Mage_Core_Helper_Abstract
 
 
     /**
-     * @return $this
+     * delete entries, which started with the upload but did not finish
      */
 
     public function deletePendingEntries()
@@ -294,7 +297,50 @@ class Welance_Kraken_Helper_Data extends Mage_Core_Helper_Abstract
                 $writeConnection->query($deleteQuery);
             }
         }
+    }
 
-        return $this;
+    /**
+     * check if image in Database exits
+     * if not remove it from Database
+     */
+    public function removeDeletedImagesFromDatabase()
+    {
+        $types = array(Welance_Kraken_Model_Abstract::TYPE_MEDIA, Welance_Kraken_Model_Abstract::TYPE_SKIN);
+
+        foreach ($types as $type) {
+            $resource = Mage::getSingleton('core/resource');
+            $readConnection = $resource->getConnection('core_read');
+            $table = $resource->getTableName('welance_kraken/images_'.$type);
+            $query = "SELECT * FROM {$table}";
+            $entries = $readConnection->fetchAll($query);
+
+            if (count($entries) > 0) {
+                $this->_cleanUpImages($entries,$table);
+            }
+        }
+    }
+
+    /**
+     * @param array $entries
+     */
+    protected function _cleanUpImages($entries,$table)
+    {
+        $toDelete = array();
+        foreach ($entries as $entry) {
+            $file =  Mage::getBaseDir() . DS . $entry['path'] . DS . $entry['image_name'];
+            if (!is_file($file)) {
+                $toDelete[] = $entry['id'];
+            }
+        }
+
+        if (count($toDelete) > 0) {
+            $toDeleteString = implode(',',$toDelete);
+            $resource = Mage::getSingleton('core/resource');
+            $writeConnection = $resource->getConnection('core_write');
+
+            $query = "DELETE FROM {$table} WHERE id IN ({$toDeleteString})";
+
+            $writeConnection->query($query);
+        }
     }
 }

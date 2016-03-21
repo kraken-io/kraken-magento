@@ -26,7 +26,10 @@ class Welance_Kraken_KrakenController extends Mage_Adminhtml_Controller_Action
 
     public function indexAction()
     {
-        Mage::helper('welance_kraken')->deletePendingEntries();
+        $helper = Mage::helper('welance_kraken');
+        $helper->deletePendingEntries();
+        $helper->removeDeletedImagesFromDatabase();
+
 
         $this->loadLayout();
         $this->renderLayout();

@@ -10,6 +10,18 @@
     $imagesJson = $this->getNewImagesAsJson();
     $total = count(json_decode($imagesJson));
     $toBeOptimized = $folderImagesCount - $imagesCount;
+
+    /**
+     * quickfix for deleted images, if we have more images in DB then on disk
+     * this should not happen anymore due to the new function
+     * Welance_Kraken_Helper_Data::removeDeletedImagesFromDatabase
+     * But just to be sure, I added this
+     */
+    if($toBeOptimized < 0) {
+        $percent = 100;
+        $toBeOptimized = 0;
+        $imagesCount = $folderImagesCount;
+    }
 ?>
 
 <h3>Media Images</h3>

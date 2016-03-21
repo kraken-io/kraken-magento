@@ -112,9 +112,9 @@
                     var successMessage = "";
 
                     if (type === "media") {
-                        successMessage = "Congratulations! Your skin images have been optimized.";
-                    } else {
                         successMessage = "Congratulations! Your media images have been optimized.";
+                    } else {
+                        successMessage = "Congratulations! Your skin images have been optimized.";
                     }
 
                     $j("#kraken-modal-head").text(successMessage);

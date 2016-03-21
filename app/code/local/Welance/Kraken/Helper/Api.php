@@ -41,8 +41,15 @@ class Welance_Kraken_Helper_Api extends Mage_Core_Helper_Abstract
 
     public function krakenRequest($data, $url)
     {
-        $client = new Zend_Http_Client($url);
-        $client->setAdapter('Zend_Http_Client_Adapter_Curl');
+
+        $config = array(
+            'adapter'   => 'Zend_Http_Client_Adapter_Curl',
+            'curloptions' => array(
+                CURLOPT_USERAGENT =>
+                    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.85 Safari/537.36"
+            )
+        );
+        $client = new Zend_Http_Client($url,$config);
 
         if (isset($data['file'])) {
             $client->setFileUpload($data['file'],'file');
