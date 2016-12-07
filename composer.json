@@ -1,0 +1,9 @@
+{
+  "name": "kraken-io/kraken-magento",
+  "type": "magento-module",
+  "license":"GPL-2.0",
+  "description":"Advanced optimization for your Magento JPEG, PNG, GIF and SVG images",
+  "require": {
+    "magento-hackathon/magento-composer-installer": "*"
+  }
+}
