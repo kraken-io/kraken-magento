@@ -1,0 +1,8 @@
+app/code/community/Welance/Kraken/ app/code/community/Welance/Kraken/
+app/design/adminhtml/default/default/layout/kraken.xml app/design/adminhtml/default/default/layout/kraken.xml
+app/design/adminhtml/default/default/template/kraken/ app/design/adminhtml/default/default/template/kraken/
+app/design/frontend/base/default/layout/kraken.xml app/design/frontend/base/default/layout/kraken.xml
+app/design/frontend/base/default/template/kraken app/design/frontend/base/default/template/kraken
+app/etc/modules/Welance_Kraken.xml app/etc/modules/Welance_Kraken.xml
+js/kraken/ js/kraken/
+skin/adminhtml/default/default/kraken/ skin/adminhtml/default/default/kraken/
