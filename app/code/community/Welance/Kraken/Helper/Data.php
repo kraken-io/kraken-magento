@@ -13,6 +13,7 @@ class Welance_Kraken_Helper_Data extends Mage_Core_Helper_Abstract
 
 
     /**
+     * @var string $type
      * @return bool
      */
 
@@ -31,7 +32,8 @@ class Welance_Kraken_Helper_Data extends Mage_Core_Helper_Abstract
 
 
     /**
-     * @return $this
+     * @var string $dir
+     * @return array
      */
 
     public function getAllImages($dir)
@@ -41,20 +43,9 @@ class Welance_Kraken_Helper_Data extends Mage_Core_Helper_Abstract
         return $images;
     }
 
-
-    /**
-     * @return int
-     */
-
-    public function countImages($dir)
-    {
-        return count($this->_searchDirectories($dir));
-    }
-
-
     /**
      * @param $dir
-     * @return $this
+     * @return array
      */
 
     protected function _searchDirectories($dir)
@@ -75,19 +66,12 @@ class Welance_Kraken_Helper_Data extends Mage_Core_Helper_Abstract
 
         $images = array();
 
-        foreach ($handle as $fullpath => $object) {
+        foreach ($handle as $object) {
+
             $imageName = $object->getFileName();
+            $path = $object->getPath();
 
-            if (preg_match($regexp,$object->getPath())) {
-                continue;
-            }
-
-            if ($object->isDir()) {
-                continue;
-            }
-
-            if (!$object->isReadable()) {
-                Mage::log('not readable: '.$fullpath,null,'read.log');
+            if (preg_match($regexp,$path) || $object->isDir() || !$object->isReadable()) {
                 continue;
             }
 
@@ -102,8 +86,8 @@ class Welance_Kraken_Helper_Data extends Mage_Core_Helper_Abstract
                 }
             }
 
-            $checksum = sha1_file($fullpath);
-            $_dir = str_replace($rootDir.DS,'',$object->getPath());
+            $checksum = sha1_file($path);
+            $_dir = str_replace($rootDir.DS,'',$path);
 
             $images[] = array(
                 'dir' => $_dir,
@@ -114,7 +98,6 @@ class Welance_Kraken_Helper_Data extends Mage_Core_Helper_Abstract
 
         return $images;
     }
-
 
     /**
      * @param $type
@@ -243,10 +226,12 @@ class Welance_Kraken_Helper_Data extends Mage_Core_Helper_Abstract
 
 
     /**
-     * @return bool
+     * @param $images
+     * @return array
      */
 
-    public function imageExists($type, $path, $imageName, $checksum)
+
+    public function getNotOptimizedImages($images,$type)
     {
         $resource = Mage::getSingleton('core/resource');
 
@@ -254,50 +239,31 @@ class Welance_Kraken_Helper_Data extends Mage_Core_Helper_Abstract
 
         $table = $resource->getTableName('welance_kraken/images_'.$type);
 
-        $query = "SELECT `id` FROM `{$table}` WHERE `path` = :path AND `image_name` = :image_name AND
-                  (`original_checksum` = :checksum OR `checksum_after_upload` = :checksum)";
+        $query = "SELECT `path`,`image_name`,`original_checksum`,`checksum_after_upload` FROM `{$table}` ORDER BY `image_name` ASC";
 
-        $bind = array(
-            'path' => $path,
-            'image_name' => $imageName,
-            'checksum' => $checksum
-        );
+        $results = $readConnection->query($query)->fetchAll();
 
-        /**
-         * Using $readConnection->query() with bind parameter automatically escapes the string
-         */
-
-        $select = $readConnection->query($query,$bind);
-
-        if ($select->fetch() !== false) {
-            return true;
-        }
-
-        return false;
-    }
-
-
-    /**
-     * delete entries, which started with the upload but did not finish
-     */
-
-    public function deletePendingEntries()
-    {
-        $types = array(Welance_Kraken_Model_Abstract::TYPE_MEDIA, Welance_Kraken_Model_Abstract::TYPE_SKIN);
-
-        foreach ($types as $type) {
-            $resource = Mage::getSingleton('core/resource');
-            $readConnection = $resource->getConnection('core_read');
-            $table = $resource->getTableName('welance_kraken/images_'.$type);
-            $query = "SELECT * FROM {$table} WHERE `uploaded_at` IS NULL AND `checksum_after_upload` IS NULL";
-
-            if (count($readConnection->fetchAll($query)) > 0) {
-                $writeConnection = $resource->getConnection('core_write');
-                $deleteQuery = "DELETE FROM {$table} WHERE `uploaded_at` IS NULL AND `checksum_after_upload` IS NULL";
-                $writeConnection->query($deleteQuery);
+        foreach ($images as $imageKey => $image) {
+            Mage::log(count($results),null,'results.log');
+            if(count($results) < 1) {
+                break;
             }
+
+            foreach ($results as $resultKey => $result) {
+                if($image['dir'] == $result['path'] &&
+                    $image['name'] == $result['image_name'] &&
+                    ($image['checksum'] == $result['original_checksum'] || $image['checksum'] == $result['checksum_after_upload'])) {
+                        unset($images[$imageKey]);
+                        unset($results[$resultKey]);
+                }
+            }
+
         }
+
+        return $images;
     }
+
+
 
     /**
      * check if image in Database exits
@@ -343,4 +309,10 @@ class Welance_Kraken_Helper_Data extends Mage_Core_Helper_Abstract
             $writeConnection->query($query);
         }
     }
+
+    static function cmp($a, $b)
+    {
+        return strcmp($a["name"], $b["name"]);
+    }
+
 }

@@ -1,4 +1,4 @@
-<?php
+    <?php
 
 class Welance_Kraken_Model_Observer
 {
@@ -26,7 +26,11 @@ class Welance_Kraken_Model_Observer
             }
 
             if (!extension_loaded('curl')) {
-                $session->addError($helper->__('Curl is not installed. Please install it on your server.'));
+                $session->addError($helper->__('curl is not installed. Please install it on your server.'));
+            }
+
+            if (!extension_loaded('fileinfo')) {
+                $session->addError($helper->__('fileinfo is not installed. Please install it on your server.'));
             }
         }
 
@@ -45,10 +49,8 @@ class Welance_Kraken_Model_Observer
         $apiSecret = Mage::getStoreConfig('welance_kraken/kraken_auth/api_secret');
 
         if ($apiKey && $apiSecret) {
-            $helper = Mage::helper('welance_kraken/api');
-            $response = $helper->getUserStatus();
-            $config = Mage::getModel('core/config');
-            $config->saveConfig('welance_kraken/kraken_auth/kraken_status',1);
+            Mage::helper('welance_kraken/api')->getUserStatus();
+            Mage::getModel('core/config')->saveConfig('welance_kraken/kraken_auth/kraken_status',1);
         }
 
         return $this;

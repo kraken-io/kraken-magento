@@ -26,10 +26,9 @@ class Welance_Kraken_KrakenController extends Mage_Adminhtml_Controller_Action
 
     public function indexAction()
     {
-        $helper = Mage::helper('welance_kraken');
-        $helper->deletePendingEntries();
-        $helper->removeDeletedImagesFromDatabase();
 
+        $helper = Mage::helper('welance_kraken');
+        $helper->removeDeletedImagesFromDatabase();
 
         $this->loadLayout();
         $this->renderLayout();
@@ -39,6 +38,13 @@ class Welance_Kraken_KrakenController extends Mage_Adminhtml_Controller_Action
     {
         $type = $this->getRequest()->getParam('type');
         $image = json_decode($this->getRequest()->getParam('image'),true);
+
+        // remove the cache key for new calculations
+        $cache = Mage::app()->getCache();
+
+        if($cache->load('welance_kraken_' . $type . '_images')) {
+            $cache->remove('welance_kraken_' . $type . '_images');
+        }
 
         $apiHelper = Mage::helper('welance_kraken/api');
 
@@ -89,5 +95,10 @@ class Welance_Kraken_KrakenController extends Mage_Adminhtml_Controller_Action
 
         $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($response));
         $this->getResponse()->setHeader('Content-type', 'application/json');
+    }
+
+    protected function _isAllowed()
+    {
+        return true;
     }
 }

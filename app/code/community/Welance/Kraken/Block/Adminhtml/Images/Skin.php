@@ -2,29 +2,71 @@
 
 class Welance_Kraken_Block_Adminhtml_Images_Skin extends Mage_Core_Block_Template
 {
+    protected $_skinImages;
+
+    protected $_skinImageCount;
+
+    protected $_skinImageFolderCount;
+
+    protected $_type = Welance_Kraken_Model_Abstract::TYPE_SKIN;
+
+    protected function _construct()
+    {
+        $cache = Mage::app()->getCache();
+
+        if ($data = $cache->load('welance_kraken_' . $this->_type . '_images')) {
+            $cacheData = unserialize($data);
+
+            $this->_skinImages = $cacheData['skin_images'];
+            $this->_skinImageCount = $cacheData['skin_image_count'];
+            $this->_skinImageFolderCount = $cacheData['skin_image_folder_count'];
+        }
+
+        if (empty($this->_skinImages)) {
+            $helper = Mage::helper('welance_kraken');
+            $_images = $helper->getAllImages($this->_type);
+            usort($_images,array("Welance_Kraken_Helper_Data","cmp"));
+
+            $this->_skinImages = $_images;
+            $this->_skinImageCount = $helper->getImageCount($this->_type);
+            $this->_skinImageFolderCount = count($this->_skinImages);
+
+            $cacheData = array(
+                'skin_images' => $this->_skinImages,
+                'skin_image_count' => $this->_skinImageCount,
+                'skin_image_folder_count' => $this->_skinImageFolderCount
+            );
+
+            $cache->save(serialize($cacheData),'welance_kraken_' . $this->_type . '_images');
+        }
+    }
+
+
     public function getSkinImageCount()
     {
-        return Mage::helper('welance_kraken')->getImageCount(Welance_Kraken_Model_Abstract::TYPE_SKIN);
+        return $this->_skinImageCount;
     }
 
     public function getSkinImageFolderCount()
     {
-        return Mage::helper('welance_kraken')->countImages(Welance_Kraken_Model_Abstract::TYPE_SKIN);
+        return $this->_skinImageFolderCount;
     }
 
     public function getNewImagesAsJson()
     {
-        $helper = Mage::helper('welance_kraken');
+        if($this->_skinImages == 0) {
 
-        $images = $helper->getAllImages(Welance_Kraken_Model_Abstract::TYPE_SKIN);
+            $images = $this->_skinImages;
 
-        $i = 0;
+        } else if ($this->_skinImageCount == $this->_skinImageFolderCount) {
 
-        foreach($images as $image){
-            if($helper->imageExists(Welance_Kraken_Model_Abstract::TYPE_SKIN,$image['dir'],$image['name'],$image['checksum'])){
-                unset($images[$i]);
-            }
-            $i++;
+            $images = array();
+
+        } else {
+
+            $helper = Mage::helper('welance_kraken');
+            $images = $helper->getNotOptimizedImages($this->_skinImages, $this->_type);
+
         }
 
         return json_encode(array_values($images));
