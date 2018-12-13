@@ -1,4 +1,4 @@
-    <?php
+<?php
 
 class Welance_Kraken_Model_Observer
 {
